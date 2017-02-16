@@ -1,7 +1,6 @@
 import maya.cmds as cmds
 #/Users/evanlewis/Desktop/EEGDataLogger.csv
-#C:\Users\Evan\Desktop\waveVis\EEGDataLoggerEdited.csv
-#C:\Users\Evan\Desktop\waveVis\data\GoodData.csv
+#SWITCH OVER TO FOR LOOPS
 
 
 DATA = []
@@ -47,7 +46,6 @@ def createPlanes():
     waves = cmds.polyPlane(w=10, h=1, sx=total, sy=7)
     cmds.move( 10*pos, x=True )
 
-
 def impressOnPlanes():
     global DATA, LENGTH, TOTALCHANNELS
     discon = i = x = channel =0
@@ -70,8 +68,7 @@ def impressOnPlanes():
         pplane = 1
 
 def createCurve(channel, offset = 0):
-    global DATA
-    global LENGTH
+    global DATA, LENGTH
     channelData = []
     for i in range(LENGTH-1):
         channelData.append((float(i), DATA[i][channel]/100, float(offset)))
@@ -105,11 +102,66 @@ def loft(channels = 5):
     elif channels == 8:
         cmds.loft('curve1', 'curve2', 'curve3', 'curve4', 'curve5', 'curve6', 'curve7', 'curve8', ch=True, rn=True, ar=True)
 
+
+def modularRefreshPlane(start, end, pplane = 1): #not in use
+    global DATA, LENGTH, TOTALCHANNELS
+    i = start
+    channel = 0
+    vertCounter = 0
+    while channel < TOTALCHANNELS:
+        while i < end:
+            cmds.select("pPlane" + str(pplane) + ".vtx[" + str(vertCounter) + "]")
+            cmds.move((DATA[i][channel] / 100), y=True)
+            i += 1
+            vertCounter += 1
+            print("vertcounter" + str(vertCounter))
+            print("i" + str(i))
+        print("channel" + str(channel))
+        channel += 1
+        i = start
+    vertCounter = 0
+
+def modularRefreshPlaneAndKey(start, end, timesRan = 1):
+    global DATA, LENGTH, TOTALCHANNELS
+    i = start
+    channel = 0
+    vertCounter = 0
+    while channel < TOTALCHANNELS:
+        while i < end:
+            cmds.select("pPlane1" + ".vtx[" + str(vertCounter) + "]") #only works for pPlane1
+            cmds.move((DATA[i][channel] / 100), y=True)
+            keySelected(timesRan)
+            i += 1
+            vertCounter += 1
+        channel += 1
+        i = start
+    vertCounter = 0
+
+
+def keySelected(frame = 0):
+    cmds.setKeyframe(time=frame)
+
+def animate(length = 200): #totalFrames should be gloabal length but how do I make that call in the function declaration
+    global DATA, LENGTH, TOTALCHANNELS
+    waves = cmds.polyPlane(w=9, h=2, sx=9, sy=4) #H is width
+    start = 0
+    end = 10
+    pplane = 1
+    frame = 1
+    totalFrames = 0
+
+    while end < length:
+        modularRefreshPlaneAndKey(start, end, start + 1)
+        start += 1
+        end += 1
+
+
+
 '''
 intake()
 createPlanes()
 impressOnPlanes()
 channel = int(raw_input('Which channel?'))'''
 intake()
-createCurveAllChannels()
-loft()
+animate()
+#C:\Users\Evan\Desktop\Projects\waveVis\data\GoodData.csv
