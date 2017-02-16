@@ -141,16 +141,16 @@ def modularRefreshPlaneAndKey(start, end, timesRan = 1):
 def keySelected(frame = 0):
     cmds.setKeyframe(time=frame)
 
-def animate(length = 200): #totalFrames should be gloabal length but how do I make that call in the function declaration
+def animate(planeLength = 20, channels = 4, animationLength = 200): #totalFrames should be gloabal length but how do I make that call in the function declaration
     global DATA, LENGTH, TOTALCHANNELS
-    waves = cmds.polyPlane(w=9, h=2, sx=9, sy=4) #H is width
+    waves = cmds.polyPlane(w=planeLength - 1, h=2, sx=planeLength - 1, sy=channels) #H is width
     start = 0
-    end = 10
+    end = planeLength
     pplane = 1
     frame = 1
     totalFrames = 0
 
-    while end < length:
+    while end < animationLength:
         modularRefreshPlaneAndKey(start, end, start + 1)
         start += 1
         end += 1
